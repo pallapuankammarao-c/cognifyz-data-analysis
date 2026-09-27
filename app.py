@@ -109,66 +109,93 @@ st.markdown("""
     }
     /* Metric Card Styling */
     .metric-card {
-        background-color: #ffffff;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 1.1rem 1.2rem;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        padding: 1.15rem 1.25rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .metric-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
     }
     .metric-title {
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        font-weight: 700;
         color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
         margin-bottom: 0.35rem;
     }
     .metric-value {
-        font-size: 1.85rem;
-        font-weight: 700;
+        font-size: 1.9rem;
+        font-weight: 800;
         color: #0f172a;
         margin-bottom: 0.2rem;
+        line-height: 1.1;
     }
     .metric-caption {
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         color: #94a3b8;
+        font-weight: 500;
     }
     /* Insight Callout */
     .insight-box {
-        background-color: #f8fafc;
+        background-color: #f0f7ff;
         border-left: 4px solid #3b82f6;
-        border-radius: 0 8px 8px 0;
-        padding: 1rem 1.25rem;
+        border-radius: 0 10px 10px 0;
+        padding: 1.1rem 1.35rem;
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
+        border-top: 1px solid #e0f2fe;
+        border-right: 1px solid #e0f2fe;
+        border-bottom: 1px solid #e0f2fe;
     }
     .insight-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #1e40af;
-        margin-bottom: 0.35rem;
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: #1d4ed8;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
     .insight-text {
-        font-size: 0.9rem;
-        color: #334155;
-        line-height: 1.5;
+        font-size: 0.92rem;
+        color: #1e293b;
+        line-height: 1.6;
         margin: 0;
     }
     /* Section Headings */
     .section-title {
         font-size: 1.35rem;
-        font-weight: 600;
-        color: #1e293b;
-        margin-top: 1.2rem;
-        margin-bottom: 0.8rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-top: 1.4rem;
+        margin-bottom: 0.85rem;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 0.4rem;
     }
 </style>
 """, unsafe_allow_html=True)
+
+
+def render_download_button(data_df: pd.DataFrame, filename: str, label: str = "Download Section Data (CSV)"):
+    """
+    Renders a standard full-width download button for section data.
+    """
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+    csv_bytes = data_df.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label=f"📥 {label}",
+        data=csv_bytes,
+        file_name=filename,
+        mime="text/csv",
+        use_container_width=True,
+    )
+
 
 
 # ---------------------------------------------------------
@@ -342,6 +369,7 @@ if navigation == "🌟 Overview":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(df[display_cols], "overview_filtered_restaurants.csv", "Download Overview Filtered Data (CSV)")
 
 
 # ---------------------------------------------------------
@@ -393,6 +421,7 @@ elif navigation == "🏙️ City Analysis":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(city_metrics, "city_analysis_metrics.csv", "Download City Metrics Data (CSV)")
 
 
 # ---------------------------------------------------------
@@ -440,6 +469,7 @@ elif navigation == "💰 Price Analysis":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(price_summary, "price_analysis_metrics.csv", "Download Price Summary Data (CSV)")
 
 
 # ---------------------------------------------------------
@@ -481,6 +511,7 @@ elif navigation == "🛵 Online Delivery":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(city_deliv_df, "online_delivery_by_city.csv", "Download Online Delivery Metrics (CSV)")
 
 
 # ---------------------------------------------------------
@@ -526,6 +557,7 @@ elif navigation == "⭐ Restaurant Ratings":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(category_df, "rating_categories_breakdown.csv", "Download Rating Distribution Breakdown (CSV)")
 
 
 # ---------------------------------------------------------
@@ -570,6 +602,7 @@ elif navigation == "🍲 Cuisine Analysis":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(top_cuisines, "top_cuisines_summary.csv", "Download Cuisine Analytics Data (CSV)")
 
 
 # ---------------------------------------------------------
@@ -625,6 +658,7 @@ elif navigation == "🗺️ Geographic Analysis":
             </p>
         </div>
         """, unsafe_allow_html=True)
+        render_download_button(geo_df[["Restaurant Name", "City", "Latitude", "Longitude", "Aggregate rating", "Votes"]], "mappable_restaurants.csv", "Download Geospatial Restaurant Records (CSV)")
 
 
 # ---------------------------------------------------------
@@ -674,6 +708,7 @@ elif navigation == "🏢 Restaurant Chains":
             </p>
         </div>
         """, unsafe_allow_html=True)
+        render_download_button(chains_df, "top_restaurant_chains.csv", "Download Restaurant Chains Summary (CSV)")
 
 
 # ---------------------------------------------------------
@@ -777,6 +812,7 @@ elif navigation == "🗳️ Votes Analysis":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(top_voted, "most_voted_restaurants.csv", "Download Most-Voted Restaurants (CSV)")
 
 
 # ---------------------------------------------------------
@@ -815,6 +851,7 @@ elif navigation == "⚖️ Price vs Delivery & Booking":
         </p>
     </div>
     """, unsafe_allow_html=True)
+    render_download_button(df[["Restaurant Name", "City", "Price_Range_Label", "Has Online delivery", "Has Table booking", "Aggregate rating", "Votes"]], "service_synergy_comparison.csv", "Download Service Synergy Data (CSV)")
 
 
 # ---------------------------------------------------------
