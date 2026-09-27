@@ -248,7 +248,7 @@ git push
 ## Deployment
 
 Deploy this Streamlit application live to the web via **Streamlit Community Cloud**:
-
+https://pallapu-data-ai.streamlit.app/
 1. Push your project to your GitHub repository following the Git commands above.
 2. Open [share.streamlit.io](https://share.streamlit.io/) and log in with your GitHub account.
 3. Click **"New app"**.
