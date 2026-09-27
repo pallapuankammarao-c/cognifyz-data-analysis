@@ -218,7 +218,7 @@ except Exception as e:
 # ---------------------------------------------------------
 st.sidebar.image("https://img.icons8.com/color/96/restaurant-table.png", width=64)
 st.sidebar.title("Cognifyz Analytics")
-st.sidebar.caption("Portfolio Project 3 &bull; Pallapu Ankamma Rao")
+
 
 navigation = st.sidebar.radio(
     "Dashboard Navigation",
