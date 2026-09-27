@@ -66,8 +66,7 @@ def plot_restaurant_map(
 
     zoom_level = 10 if selected_city != "All" else 3
 
-    fig = px.scatter_mapbox(
-        data,
+    common_kwargs = dict(
         lat="Latitude",
         lon="Longitude",
         color=color_col,
@@ -87,8 +86,15 @@ def plot_restaurant_map(
         color_continuous_scale="Plasma",
         zoom=zoom_level,
         center=dict(lat=center_lat, lon=center_lon),
-        mapbox_style="carto-positron",
     )
+
+    if hasattr(px, "scatter_map"):
+        fig = px.scatter_map(data, map_style="carto-positron", **common_kwargs)
+    elif hasattr(px, "scatter_mapbox"):
+        fig = px.scatter_mapbox(data, mapbox_style="carto-positron", **common_kwargs)
+    else:
+        fig = px.scatter_geo(data, lat="Latitude", lon="Longitude", color=color_col, hover_name="Restaurant Name", title="Geographic Distribution of Restaurants")
+
     fig.update_layout(
         margin=dict(l=10, r=10, t=50, b=10),
         font=dict(family="Arial, sans-serif", size=12),
@@ -108,19 +114,26 @@ def plot_density_map(geo_df: pd.DataFrame, selected_city: str = "All") -> go.Fig
     center_lon = data["Longitude"].mean() if len(data) > 0 else 77.2
     zoom_level = 10 if selected_city != "All" else 3
 
-    fig = px.density_mapbox(
-        data,
+    common_density_kwargs = dict(
         lat="Latitude",
         lon="Longitude",
         z="Votes",
         radius=12,
         center=dict(lat=center_lat, lon=center_lon),
         zoom=zoom_level,
-        mapbox_style="carto-positron",
         title="Restaurant Density & Customer Engagement Heatmap (Weighted by Votes)",
     )
+
+    if hasattr(px, "density_map"):
+        fig = px.density_map(data, map_style="carto-positron", **common_density_kwargs)
+    elif hasattr(px, "density_mapbox"):
+        fig = px.density_mapbox(data, mapbox_style="carto-positron", **common_density_kwargs)
+    else:
+        fig = px.density_heatmap(data, x="Longitude", y="Latitude", z="Votes", title="Restaurant Density Heatmap")
+
     fig.update_layout(
         margin=dict(l=10, r=10, t=50, b=10),
         font=dict(family="Arial, sans-serif", size=12),
     )
     return fig
+
